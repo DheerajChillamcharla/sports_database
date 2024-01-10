@@ -145,3 +145,33 @@ END
 
 
 ALTER TABLE Team_match_stats ADD CONSTRAINT MatchTeams CHECK (dbo.CheckTeam(team_id, match_id)= 1)
+
+-- Column computed based on a FUNCTION
+
+CREATE FUNCTION Age (@Dt DATE)
+RETURNS INT
+AS
+BEGIN
+    DECLARE @age INT =
+        DATEDIFF(HOUR,@Dt,GETDATE())/8766;
+    RETURN @age;
+END
+
+ALTER TABLE Player ADD player_age AS (dbo.Age(player_dob));
+ALTER TABLE Staff  ADD staff_age AS (dbo.Age(staff_dob));
+
+-- VIEW 1
+
+CREATE VIEW [Winner of matches] AS
+SELECT team_id, match_id
+FROM team_match_stats
+WHERE Result = 'Won';
+
+-- VIEW 2
+
+CREATE VIEW HighPaidCoachingStaff
+AS
+SELECT RANK() OVER (PARTITION BY team_id ORDER BY wage DESC) AS [Rank], team_id AS [Team ID], s.staff_id AS [Staff ID], staff_first_name AS [First Name], staff_last_name AS [Last Name]
+FROM Staff s
+JOIN Coaching_staff cs
+ON s.staff_id = cs.staff_id
