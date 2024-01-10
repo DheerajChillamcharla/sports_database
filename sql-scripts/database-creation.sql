@@ -108,3 +108,40 @@ CREATE TABLE Player_matches (
 );
 
 ALTER TABLE Player_matches ADD CONSTRAINT PK_PMID PRIMARY KEY(team_player_id, match_id);
+
+-- Table Level Check Constraint 1
+
+CREATE FUNCTION TeamSize(@TID VARCHAR)
+RETURNS SMALLINT
+AS
+BEGIN
+    DECLARE @Count SMALLINT = 0;
+    SELECT @Count = COUNT(player_id)
+    FROM Team_players
+    WHERE team_id = @TID AND current_player = 1;
+    RETURN @Count
+END
+
+ALTER TABLE Team_players  ADD CONSTRAINT TeamSizeLimit CHECK (dbo.TeamSize(team_id) < 11);
+
+-- Table level check constraint 2
+
+CREATE FUNCTION CheckTeam(@TID VARCHAR(10) , @MID VARCHAR(10) )
+RETURNS SMALLINT
+AS
+BEGIN
+    DECLARE @FLAG SMALLINT = 0;
+    IF @MID IN (SELECT match_id
+                    FROM Matches
+                    WHERE match_id = @MID AND (team1_id = @TID OR team2_id = @TID ))
+                    BEGIN
+
+                        SET @FLAG = 1;
+
+                    END
+
+    RETURN @FLAG
+END
+
+
+ALTER TABLE Team_match_stats ADD CONSTRAINT MatchTeams CHECK (dbo.CheckTeam(team_id, match_id)= 1)
