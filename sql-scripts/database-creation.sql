@@ -1,11 +1,10 @@
-CREATE DATABASE "Group20ProjectImplementation"
-USE "Group20ProjectImplementation"
+
 CREATE TABLE Team(
   team_id VARCHAR(10) NOT NULL PRIMARY KEY,
-  team_name VARCHAR(45) NOT NULL,
+  team_name VARCHAR(45) NOT NULL
   );
- 
-CREATE TABLE "Position" (
+
+CREATE TABLE `Position` (
   position_id VARCHAR(10) NOT NULL PRIMARY KEY,
   position_name VARCHAR(45) NOT NULL,
   position_abbr VARCHAR(10) NOT NULL
@@ -27,12 +26,12 @@ CREATE TABLE Staff (
 
 CREATE TABLE Management_staff (
   staff_id VARCHAR(10) NOT NULL PRIMARY KEY REFERENCES Staff(staff_id) ON DELETE CASCADE,
-  share_percentage INT NOT NULL, -- changed
+  share_percentage INT NOT NULL -- changed
 );
 
 CREATE TABLE Coaching_staff (
   staff_id VARCHAR(10) NOT NULL PRIMARY KEY REFERENCES Staff(staff_id) ON DELETE CASCADE,
-  wage MONEY NOT NULL, -- CHANGED
+  wage VARCHAR(10) NOT NULL, -- CHANGED
   Designation VARCHAR(45) NOT NULL
 );
 
@@ -53,7 +52,7 @@ CREATE TABLE Matches (
 CREATE TABLE Team_match_stats (
   team_id VARCHAR(10) NOT NULL REFERENCES Team(team_id) ON DELETE NO ACTION,
   match_id VARCHAR(10) NOT NULL REFERENCES Matches(match_id) ON DELETE CASCADE,
-  "Result" VARCHAR (10),
+  `Result` VARCHAR (10),
   Goals INT,
   Posession INT
 );
@@ -66,14 +65,14 @@ CREATE TABLE Player (
   player_last_name VARCHAR(45) NOT NULL,
   player_dob DATE,
   player_value INT NOT NULL,
-  player_wage MONEY , --CHANGED
+  player_wage VARCHAR(10) , -- CHANGED
   height INT,
   jersey_number INT NOT NULL,
   country_id VARCHAR(10) NOT NULL REFERENCES Country(Country_id),
   preferred_foot VARCHAR(45),
-  work_rate VARCHAR(45) 
+  work_rate VARCHAR(45)
 );
-  
+
 CREATE TABLE Player_rating (
   player_id VARCHAR(10) NOT NULL PRIMARY KEY REFERENCES Player(player_id) ON DELETE CASCADE,
   rating INT,
@@ -89,7 +88,7 @@ CREATE TABLE Player_rating (
 CREATE TABLE Player_position (
   player_position_id VARCHAR(10) NOT NULL,
   player_id VARCHAR(10) NOT NULL REFERENCES Player(player_id) ON DELETE CASCADE,
-  position_id VARCHAR(10) NOT NULL REFERENCES "Position"(position_id) ON DELETE NO ACTION,
+  position_id VARCHAR(10) NOT NULL REFERENCES `Position`(position_id) ON DELETE NO ACTION,
   team_id VARCHAR(10) NOT NULL REFERENCES Team(team_id) ON DELETE CASCADE
 );
 
@@ -104,11 +103,10 @@ CREATE TABLE Team_players (
 
 CREATE TABLE Player_matches (
   team_player_id VARCHAR(10) NOT NULL REFERENCES Team_players(team_player_id),
-  match_id VARCHAR(10) NOT NULL REFERENCES Matches (match_id),
+  match_id VARCHAR(10) NOT NULL REFERENCES Matches (match_id)
 );
 
 ALTER TABLE Player_matches ADD CONSTRAINT PK_PMID PRIMARY KEY(team_player_id, match_id);
-
 -- Table Level Check Constraint 1
 
 CREATE FUNCTION TeamSize(@TID VARCHAR)

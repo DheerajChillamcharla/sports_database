@@ -1,0 +1,15 @@
+version: '3'
+services:
+  db:
+    image: mysql
+    container_name: mysql-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: dheeraj
+      MYSQL_PASSWORD: dheeraj
+    volumes:
+      - ./sql-scripts:/docker-entrypoint-initdb.d
+      - ./datadir:/var/lib/mysql
+
